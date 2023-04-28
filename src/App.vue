@@ -70,7 +70,7 @@ const save = () => {
 };
 
 const exists = () => {
-    if (actual.value == numero.value || _.find(ganadores.value, function (num) { return num == numero.value; }) != undefined)
+    if (actual.value == numero.value || _.find(ganadores.value, function (boleto) { return boleto.numero == numero.value; }) != undefined)
         return true;
     else return false;
 };
@@ -135,13 +135,9 @@ if (localStorage.actual) actual.value = localStorage.actual;
 <template>
     <div class="flex flex-col h-screen border-0 border-red-500">
         <div class="pl-96 bg-[#343a3f] bg-no-repeat bg-left" style="background-image: url('escudo-guerrero.png')">
-
-
             <TransitionGroup class="
-            
             py-3
             pr-3
-            
             border-0 border-teal-500
             flex-none
             h-32
