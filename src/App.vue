@@ -134,20 +134,24 @@ if (localStorage.actual) actual.value = localStorage.actual;
 
 <template>
     <div class="flex flex-col h-screen border-0 border-red-500">
-        <TransitionGroup style="background-image: url('escudo-guerrero.png')" class="
-            bg-[#343a3f] bg-no-repeat bg-left
+        <div class="pl-96 bg-[#343a3f] bg-no-repeat bg-left" style="background-image: url('escudo-guerrero.png')">
+
+
+            <TransitionGroup class="
+            
             py-3
             pr-3
-            pl-96
+            
             border-0 border-teal-500
             flex-none
             h-32
             flex flex-row-reverse flex-nowrap
             gap-x-3
             overflow-auto overflow-y-visible
+            scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-300
           " tag="div" name="custom-classes" enter-active-class="animate__animated animate__slideInLeft">
-            <template v-if="csvIsLoaded">
-                <div v-for="(ganador, index) in ganadores" :key="index" ref="ganadoresInput" class="
+                <template v-if="csvIsLoaded">
+                    <div v-for="(ganador, index) in ganadores" :key="index" ref="ganadoresInput" class="
                 w-40
                 flex-none
                 border-0 border-blue-500
@@ -158,12 +162,13 @@ if (localStorage.actual) actual.value = localStorage.actual;
                 rounded-lg
                 text-center
               ">
-                    <span class='text-6xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
-                        {{ ganador.numero }}
-                    </span>
-                </div>
-            </template>
-        </TransitionGroup>
+                        <span class='font-mono text-6xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                            {{ ganador.numero }}
+                        </span>
+                    </div>
+                </template>
+            </TransitionGroup>
+        </div>
         <div class="border-b-2 border-gray-200"></div>
         <div style="background-image: url('bg-center.webp');" class="
             border-0 border-sky-500
@@ -174,15 +179,38 @@ if (localStorage.actual) actual.value = localStorage.actual;
             bg-no-repeat bg-left-top
             bg-[length:350px_300px]
           ">
-            <div class="h-full grid place-items-center" v-if="tweened.number != 0 && csvIsLoaded">
-                <span class='text-9xl font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="classes">{{ tweened.number.toFixed(0) }}</span>
-                <button class="justify-self-end text-xs bg-red-500 text-white p-1 rounded-sm" @click="cleanActual">
-                    Borrar
+            <div class="h-full grid place-items-center">
+                <span class='font-mono text-[250px] font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
+                    {{ tweened.number != 0 ? tweened.number.toFixed(0) : '0' }}
+                </span>
+                <button v-if="csvIsLoaded" @click="getRandom" class="
+                inline-block
+                ml-4
+                px-6
+                py-2
+                text-white
+                font-medium
+                text-4xl
+                leading-tight
+                uppercase
+                rounded
+                hover:bg-black hover:bg-opacity-5
+                focus:outline-none focus:ring-0
+                transition
+                duration-150
+                ease-in-out
+                tracking-widest
+                bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500
+              ">
+                    G I R A R
                 </button>
+                <!-- <button class="justify-self-end text-xs bg-red-500 text-white p-1 rounded-sm" @click="cleanActual">
+                    Borrar
+                </button> -->
             </div>
         </div>
         <div class="border-0 border-fuchsia-500 m-3 relative h-14">
-            <div class="flex absolute right-0">
+            <div class="flex absolute left-0">
                 <button @click="clean" v-if="csvIsLoaded">Borrar</button>
                 <Upload @loaded="loaded"></Upload>
                 <template v-if="csvIsLoaded">
@@ -217,28 +245,21 @@ if (localStorage.actual) actual.value = localStorage.actual;
                 " @click="save">
                         Agregar
                     </button>
-                    <button class="
-                  inline-block
-                  ml-4
-                  px-6
-                  py-2
-                  border-0 border-blue-600
-                  text-blue-600
-                  font-medium
-                  text-xs
-                  leading-tight
-                  uppercase
-                  rounded
-                  hover:bg-black hover:bg-opacity-5
-                  focus:outline-none focus:ring-0
-                  transition
-                  duration-150
-                  ease-in-out
-                " @click="getRandom">
-                        Aleatorio
-                    </button>
                 </template>
             </div>
         </div>
     </div>
 </template>
+<style setup>
+::-webkit-scrollbar {
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #718096;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #CBD5E0;
+}
+</style>
