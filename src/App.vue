@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, computed } from 'vue'
 import { gsap } from "gsap";
 
 import "animate.css";
@@ -18,24 +18,45 @@ const boletos = ref([]);
 
 const ganadoresInput = ref(null);
 
+const from = ref(0);
+const via = ref(0);
+const to = ref(0);
+
+const colorsFrom = [
+    'from-blue-500', 'from-red-500', 'from-green-500', 'from-pink-500', 'from-orange-500', 'from-amber-500', 'from-yellow-500', 'from-lime-500', 'from-emerald-500', 'from-teal-500', 'from-cyan-500', 'from-sky-500', 'from-indigo-500', 'from-violet-500', 'from-purple-500', 'from-fuchsia-500', 'from-rose-500',
+];
+const colorsVia = [
+    'via-blue-500', 'via-red-500', 'via-green-500', 'via-pink-500', 'via-orange-500', 'via-amber-500', 'via-yellow-500', 'via-lime-500', 'via-emerald-500', 'via-teal-500', 'via-cyan-500', 'via-sky-500', 'via-indigo-500', 'via-violet-500', 'via-purple-500', 'via-fuchsia-500', 'via-rose-500',
+];
+const colorsTo = [
+    'to-blue-500', 'to-red-500', 'to-green-500', 'to-pink-500', 'to-orange-500', 'to-amber-500', 'to-yellow-500', 'to-lime-500', 'to-emerald-500', 'to-teal-500', 'to-cyan-500', 'to-sky-500', 'to-indigo-500', 'to-violet-500', 'to-purple-500', 'to-fuchsia-500', 'to-rose'
+];
+
 watch(actual, (n) => {
     if (n == '') return;
     gsap.to(tweened, { duration: 0.7, number: Number(n) || 0 });
 });
 
+const classes = computed(() => {
+    return colorsFrom[from.value] + ' ' + colorsVia[via.value] + ' ' + colorsTo[to.value];
+})
+
 const save = () => {
     if (numero.value != "") {
         if (exists()) {
-
             alert('El numero ' + numero.value + ' ya fue seleccionado.');
             return;
         }
 
+        from.value = getRandomInt(0, colorsFrom.length);
+        via.value = getRandomInt(0, colorsVia.length);
+        to.value = getRandomInt(0, colorsTo.length);
+
         if (actual.value != "") {
-            ganadores.value.push(actual.value);
+            ganadores.value.push({ numero: parseInt(actual.value), classes: classes.value });
             localStorage.ganadores = JSON.stringify(ganadores.value);
         }
-        actual.value = numero.value;
+        actual.value = parseInt(numero.value);
         localStorage.actual = actual.value;
         numero.value = "";
         if (ganadores.value.length > 0)
@@ -78,8 +99,7 @@ const loaded = (event) => {
     csvIsLoaded.value = event.split("\n");
     csvIsLoaded.value.forEach((row) => {
         if (row != '') {
-            let arr = row.split(",");
-            boletos.value.push(arr[0]);
+            boletos.value.push(row.trim());
         }
     });
 };
@@ -88,10 +108,10 @@ const getRandom = () => {
     do {
         let index = getRandomInt(1, boletos.value.length);
         numero.value = boletos.value[index];
-        console.log(numero.value);
     } while (exists())
     save();
 };
+
 
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
@@ -138,24 +158,24 @@ if (localStorage.actual) actual.value = localStorage.actual;
                 rounded-lg
                 text-center
               ">
-                    <span class="text-6xl">
-                        {{ ganador }}
+                    <span class='text-6xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                        {{ ganador.numero }}
                     </span>
                 </div>
             </template>
         </TransitionGroup>
         <div class="border-b-2 border-gray-200"></div>
-        <div style="background-image: url('bg-center.jpeg'); border-radius: 50px" class="
+        <div style="background-image: url('bg-center.webp');" class="
             border-0 border-sky-500
             flex-none
             h-[calc(100%-15rem)]
             text-center
             m-3
             bg-no-repeat bg-left-top
-            bg-[length:200px_200px]
+            bg-[length:350px_300px]
           ">
             <div class="h-full grid place-items-center" v-if="tweened.number != 0 && csvIsLoaded">
-                <span class="text-9xl font-semibold">{{ tweened.number.toFixed(0) }}</span>
+                <span class='text-9xl font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="classes">{{ tweened.number.toFixed(0) }}</span>
                 <button class="justify-self-end text-xs bg-red-500 text-white p-1 rounded-sm" @click="cleanActual">
                     Borrar
                 </button>

@@ -12,7 +12,7 @@ const clean = () => {
     loadingXMLFiles.value = 0;
 };
 
-const loadXml = () => {
+const loadFile = () => {
     let total = file.value.files.length;
     for (let i = 0; i < total; i++) {
         let loadedFile = file.value.files[i];
@@ -111,7 +111,7 @@ const errorHandler = (evt) => {
                   }}
                 </span>
                 <input
-                  v-on:change="loadXml()"
+                  v-on:change="loadFile()"
                   id="file-upload"
                   name="file-upload"
                   ref="file"
