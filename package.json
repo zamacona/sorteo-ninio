@@ -8,15 +8,25 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "electron:start": "electron ."
+    "electron:start": "electron .",
+    "packager": "electron-packager ./ --platform=win32",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
+    "electron-squirrel-startup": "^1.0.0",
     "gsap": "^3.11.5",
     "underscore": "^1.13.6",
     "vue": "^3.2.47"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
     "@vitejs/plugin-vue": "^4.1.0",
     "autoprefixer": "^10.4.14",
     "electron": "^24.1.3",
