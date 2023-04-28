@@ -4,6 +4,8 @@
   "version": "0.0.1",
   "type": "commonjs",
   "main": "main.js",
+  "description": "Tombola.",
+  "author": "Carlos Zamacona Lopez",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 out/
+dist/
+sorteo-win32-x64/

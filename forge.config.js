@@ -4,7 +4,10 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        description: "Tombola.",
+        authors: "Carlos Zamacona Lopez",
+      },
     },
     {
       name: '@electron-forge/maker-zip',
