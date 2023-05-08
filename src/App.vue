@@ -7,7 +7,9 @@ import _, { map } from "underscore";
 import Upload from "./components/Upload.vue";
 
 const ganadores = ref([]);
-const actual = ref('');
+const actual = ref(null);
+
+
 const numero = ref('');
 const tweened = reactive({
     number: 0
@@ -33,31 +35,63 @@ const colorsTo = [
 ];
 
 watch(actual, (n) => {
-    if (n == '') return;
-    gsap.to(tweened, { duration: 0.7, number: Number(n) || 0 });
-});
+    if (n?.folio == null) return;
+    gsap.to(tweened, { duration: 0.7, number: Number(n.folio) || 0 });
+})
+
 
 const classes = computed(() => {
     return colorsFrom[from.value] + ' ' + colorsVia[via.value] + ' ' + colorsTo[to.value];
 })
 
+const loaded = (event) => {
+    csvIsLoaded.value = event.split("\n");
+    csvIsLoaded.value.forEach((row) => {
+        if (row != '') {
+            let arr = row.split(',');
+            boletos.value.push({
+                folio: arr[0].trim(),
+                nombre: arr[1]?.trim()
+            });
+        }
+    });
+    if (ganadores.value.length > 0)
+        setTimeout(() => {
+            const el = ganadoresInput.value[ganadores.value.length - 1];
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+            }
+        }, 300);
+};
+
+const manual = () => {
+    numero.value = getBoleto(numero.value);
+    if (exists()) {
+        alert('El numero ' + numero.value.folio + ' ya fue seleccionado.');
+        return;
+    }
+    save();
+}
+
 const save = () => {
     if (numero.value != "") {
         if (exists()) {
-            alert('El numero ' + numero.value + ' ya fue seleccionado.');
+            alert('El numero ' + numero.value.folio + ' ya fue seleccionado.');
             return;
+        }
+
+        if (actual.value != null) {
+            ganadores.value.push({ boleto: actual.value, classes: classes.value });
+            localStorage.ganadores = JSON.stringify(ganadores.value);
         }
 
         from.value = getRandomInt(0, colorsFrom.length);
         via.value = getRandomInt(0, colorsVia.length);
         to.value = getRandomInt(0, colorsTo.length);
 
-        if (actual.value != "") {
-            ganadores.value.push({ numero: parseInt(actual.value), classes: classes.value });
-            localStorage.ganadores = JSON.stringify(ganadores.value);
-        }
-        actual.value = parseInt(numero.value);
-        localStorage.actual = actual.value;
+        actual.value = numero.value;
+        localStorage.actual = JSON.stringify(actual.value);
+
         numero.value = "";
         if (ganadores.value.length > 0)
             setTimeout(() => {
@@ -70,7 +104,9 @@ const save = () => {
 };
 
 const exists = () => {
-    if (actual.value == numero.value || _.find(ganadores.value, function (boleto) { return boleto.numero == numero.value; }) != undefined)
+    if (actual.value?.folio == numero.value.folio
+        || (_.find(ganadores.value, function (ganador) { return ganador.boleto.folio == numero.value.folio; }) != undefined)
+    )
         return true;
     else return false;
 };
@@ -81,7 +117,7 @@ const clean = () => {
         localStorage.ganadores = JSON.stringify(ganadores.value);
     }
     if (localStorage.actual) {
-        actual.value = "";
+        actual.value = null;
         localStorage.actual = actual.value;
     }
     tweened.number = 0;
@@ -89,19 +125,42 @@ const clean = () => {
 
 const cleanActual = () => {
     if (localStorage.actual) {
-        actual.value = "";
+        actual.value = null;
         localStorage.actual = actual.value;
     }
     tweened.number = 0;
 };
 
-const loaded = (event) => {
-    csvIsLoaded.value = event.split("\n");
-    csvIsLoaded.value.forEach((row) => {
-        if (row != '') {
-            boletos.value.push(row.trim());
-        }
+
+
+const getBoleto = (folio) => {
+    if (!csvIsLoaded.value) return;
+    let boleto = _.find(boletos.value, function (boleto) {
+        return boleto.folio == folio;
     });
+    if (boleto == undefined) {
+        return {
+            folio: folio,
+            nombre: ""
+        };
+    }
+    return boleto;
+}
+
+const getNombre = (folio) => {
+    if (!csvIsLoaded.value) return;
+    let boleto = _.find(boletos.value, function (boleto) {
+        return boleto.folio == folio;
+    });
+    if (boleto == undefined) {
+        return "";
+    }
+    return boleto.nombre;
+}
+
+const mouseup = () => {
+    numero.value = getBoleto(300);
+    save();
 };
 
 const getRandom = () => {
@@ -119,17 +178,15 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-if (localStorage.ganadores) {
-    ganadores.value = JSON.parse(localStorage.ganadores);
-    if (ganadores.value.length > 0)
-        setTimeout(() => {
-            const el = ganadoresInput[ganadores.value.length - 1];
-            if (el) {
-                el.scrollIntoView({ behavior: "smooth" });
-            }
-        }, 300);
+
+//carga datos almacenados
+if (localStorage.ganadores) ganadores.value = JSON.parse(localStorage.ganadores);
+if (localStorage.actual) {
+    actual.value = JSON.parse(localStorage.actual);
+    from.value = getRandomInt(0, colorsFrom.length);
+    via.value = getRandomInt(0, colorsVia.length);
+    to.value = getRandomInt(0, colorsTo.length);
 }
-if (localStorage.actual) actual.value = localStorage.actual;
 </script>
 
 <template>
@@ -148,7 +205,7 @@ if (localStorage.actual) actual.value = localStorage.actual;
           " tag="div" name="custom-classes" enter-active-class="animate__animated animate__slideInLeft">
                 <template v-if="csvIsLoaded">
                     <div v-for="(ganador, index) in ganadores" :key="index" ref="ganadoresInput" class="
-                w-40
+                w-48
                 flex-none
                 border-0 border-blue-500
                 grid
@@ -158,15 +215,18 @@ if (localStorage.actual) actual.value = localStorage.actual;
                 rounded-lg
                 text-center
               ">
-                        <span class='font-mono text-6xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
-                            {{ ganador.numero }}
+                        <span class='font-mono text-4xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                            {{ ganador.boleto.folio }}
+                        </span>
+                        <span class='font-mono text-base text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                            {{ ganador.boleto.nombre }}
                         </span>
                     </div>
                 </template>
             </TransitionGroup>
         </div>
         <div class="border-b-2 border-gray-200"></div>
-        <div style="background-image: url('bg-center.webp');" class="
+        <div style="background-image: url('bg-center.jpeg'); border-radius: 50px" class="
             border-0 border-sky-500
             flex-none
             h-[calc(100%-15rem)]
@@ -179,7 +239,10 @@ if (localStorage.actual) actual.value = localStorage.actual;
                 <span class='font-mono text-[250px] font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
                     {{ tweened.number != 0 ? tweened.number.toFixed(0) : '0' }}
                 </span>
-                <button v-if="csvIsLoaded" @click="getRandom" class="
+                <span class='font-mono text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
+                    {{ getNombre(tweened.number.toFixed(0)) }}
+                </span>
+                <button v-if="csvIsLoaded" @click="getRandom" @mouseup.right="mouseup" @contextmenu.prevent class="
                 inline-block
                 ml-4
                 px-6
@@ -220,7 +283,7 @@ if (localStorage.actual) actual.value = localStorage.actual;
                   bg-white bg-clip-padding
                   border border-solid border-gray-300
                   rounded
-                " type="number" v-model="numero" @keypress.enter="save" />
+                " type="number" v-model="numero" @keypress.enter="manual" />
                     <button class="
                   inline-block
                   ml-4
@@ -238,7 +301,7 @@ if (localStorage.actual) actual.value = localStorage.actual;
                   transition
                   duration-150
                   ease-in-out
-                " @click="save">
+                " @click="manual">
                         Agregar
                     </button>
                 </template>
