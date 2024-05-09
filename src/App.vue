@@ -228,14 +228,14 @@ if (localStorage.actual) {
             </TransitionGroup>
         </div>
         <div class="border-b-2 border-gray-200"></div>
-        <div style="background-image: url('bg-center-2023-Septiembre.jpg'); border-radius: 50px" class="
+        <div style="background-image: url('bg-center2024.jpeg'); border-radius: 50px" class="
             border-0 border-sky-500
             flex-none
             h-[calc(100%-15rem)]
             text-center
             m-3
             bg-no-repeat bg-left-top
-            bg-[length:400px_250px]
+            bg-[length:400px_350px]
           ">
             <div class="h-full grid place-items-center">
                 <span class='font-mono text-[250px] font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
