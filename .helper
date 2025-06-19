@@ -2,8 +2,8 @@
 2. Para ejecutar en local se debe hacer desde la rama master: npm run dev.
 3. Para publicar, en la rama master hacer: npm run build.
 4. Corregir directorio en dist index.html agregando un . antes de las rutas "./".
-5. En la rama master probar electron con el comando: npm run electron:start.
-6. En la rama master crear ejecutable con el comando: npm run make.
+5. En la rama electron probar electron con el comando: npm run electron:start.
+6. En la rama electron crear ejecutable con el comando: npm run make.
 
 
 Posibles mejoras.

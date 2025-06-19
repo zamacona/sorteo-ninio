@@ -193,7 +193,7 @@ if (localStorage.actual) {
 
 <template>
     <div class="flex flex-col h-screen border-0 border-red-500">
-        <div class="pl-96 bg-[#343a3f] bg-no-repeat bg-left" style="background-image: url('escudo-guerrero.png')">
+        <div class="pl-96 bg-[#343a3f] bg-no-repeat bg-left" style="background-image: url('logo_ciex.png'); background-size:auto 100%">
             <TransitionGroup class="
             py-3
             pr-3
@@ -228,14 +228,14 @@ if (localStorage.actual) {
             </TransitionGroup>
         </div>
         <div class="border-b-2 border-gray-200"></div>
-        <div style="background-image: url('bg-center2025.png'); border-radius: 50px" class="
+        <div style="background-image: url('bg-ciex-11.png'); border-radius: 50px" class="
             border-0 border-sky-500
             flex-none
             h-[calc(100%-15rem)]
             text-center
             m-3
             bg-no-repeat bg-left-top
-            bg-[length:400px_350px]
+            bg-[length:550px_350px]
           ">
             <div class="h-full grid place-items-center">
                 <span class='font-mono text-[250px] font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
