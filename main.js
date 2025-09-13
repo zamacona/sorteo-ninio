@@ -13,6 +13,7 @@ function createWindow() {
     },
   });
 
+  win.removeMenu();
   win.maximize();
   win.loadFile("dist/index.html");
 }
