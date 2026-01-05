@@ -228,7 +228,7 @@ if (localStorage.actual) {
             </TransitionGroup>
         </div>
         <div class="border-b-2 border-gray-200"></div>
-        <div style="background-image: url('bg-center-2025-sep.png'); border-radius: 50px" class="
+        <div style="background-image: url('reyes-2026.jpeg'); border-radius: 50px" class="
             border-0 border-sky-500
             flex-none
             h-[calc(100%-30rem)]
