@@ -45,16 +45,19 @@ const classes = computed(() => {
 })
 
 const loaded = (event) => {
-    csvIsLoaded.value = event.split("\n");
-    csvIsLoaded.value.forEach((row) => {
-        if (row != '') {
-            let arr = row.split(',');
-            boletos.value.push({
+    boletos.value = [];
+    // Normalizar saltos de línea para soportar archivos creados en Windows (\r\n) y Unix (\n)
+    const rows = event.split(/\r\n|\n/);
+    csvIsLoaded.value = rows;
+    boletos.value = rows
+        .filter((row) => row.trim() !== "")
+        .map((row) => {
+            let arr = row.split(",");
+            return {
                 folio: arr[0].trim(),
-                nombre: arr[1]?.trim()
-            });
-        }
-    });
+                nombre: arr[1]?.trim(),
+            };
+        });
     if (ganadores.value.length > 0)
         setTimeout(() => {
             const el = ganadoresInput.value[ganadores.value.length - 1];
@@ -217,10 +220,10 @@ if (localStorage.actual) {
                 rounded-lg
                 text-center
               ">
-                        <span class='font-mono text-4xl text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                        <span class='font-mono text-4xl text-transparent bg-clip-text bg-gradient-to-br' :class="[ganador.classes, {'text-7xl':!ganador.boleto.nombr}]">
                             {{ ganador.boleto.folio }}
                         </span>
-                        <span class='font-mono text-base text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
+                        <span v-if="ganador.boleto.nombre" class='font-mono text-base text-transparent bg-clip-text bg-gradient-to-br' :class="ganador.classes">
                             {{ ganador.boleto.nombre }}
                         </span>
                     </div>
@@ -262,6 +265,7 @@ if (localStorage.actual) {
                 ease-in-out
                 tracking-widest
                 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500
+                z-10
               ">
                     G I R A R
                 </button>
