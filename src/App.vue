@@ -244,7 +244,7 @@ if (localStorage.actual) {
                 <span class='font-mono text-[250px] font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
                     {{ tweened.number != 0 ? tweened.number.toFixed(0) : '0' }}
                 </span>
-                <span class='font-mono text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-br' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
+                <span class='font-mono text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-br pb-2' :class="[tweened.number != 0 ? classes : '']" v-if="csvIsLoaded">
                     {{ getNombre(tweened.number.toFixed(0)) }}
                 </span>
                 <button v-if="csvIsLoaded" @click="getRandom" @mouseup.right="mouseup" @contextmenu.prevent class="

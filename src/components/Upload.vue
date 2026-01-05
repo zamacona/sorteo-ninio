@@ -14,13 +14,14 @@ const clean = () => {
 
 const loadFile = () => {
     let total = file.value.files.length;
+    loadingXMLFiles.value = 1;
     for (let i = 0; i < total; i++) {
         let loadedFile = file.value.files[i];
         if (loadedFile) {
             getAsText(loadedFile, total, i + 1);
         }
     }
-    loadingXMLFiles.value = 2;
+    file.value.value = "";
 };
 
 const getAsText = (file, total, index) => {
@@ -60,9 +61,11 @@ const loaded = (evt) => {
         loadingXMLFiles.value = 1;
         totalReaded.value = total + "%";
     } else if (total >= 100) {
-        totalReaded.value = "100%";
-        loadingXMLFiles.value = 2;
-        emit("loaded", fileString);
+        setTimeout(() => {
+            totalReaded.value = "100%";
+            loadingXMLFiles.value = 2;
+            emit("loaded", fileString);
+        }, 500);
     }
 };
 
